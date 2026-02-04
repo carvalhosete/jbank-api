@@ -2,10 +2,12 @@ package com.jbank.jbank.controller;
 
 import com.jbank.jbank.dto.ContaDTO;
 import com.jbank.jbank.service.ContaService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/contas")
@@ -18,9 +20,18 @@ public class ContaController {
     }
 
     @PostMapping
-    public ContaDTO criarConta(@RequestBody ContaDTO dadosRecebidos){
+    public ResponseEntity<ContaDTO> criarConta(@RequestBody ContaDTO dados, UriComponentsBuilder uriBuilder){
+        ContaDTO contaCriada = service.salvar(dados);
 
-        return service.salvar(dadosRecebidos);
+        URI uri = uriBuilder.path("/contas/{id}").buildAndExpand(contaCriada.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(contaCriada);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContaDTO> buscarPorId(@PathVariable Long id){
+        ContaDTO conta = service.buscarPorId(id);
+        return ResponseEntity.ok(conta);
     }
 
 }

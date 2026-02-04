@@ -7,6 +7,17 @@ public class ContaDTO {
     private Double saldo;
     private String titular;
 
+    public ContaDTO(){
+    }
+
+    public ContaDTO(com.jbank.jbank.model.Conta conta){
+        this.id = conta.getId();
+        this.agencia = conta.getAgencia();
+        this.numero = conta.getNumero();
+        this.saldo = conta.getSaldo();
+        this.titular = conta.getTitular();
+    }
+
     public Long getId() {
         return id;
     }

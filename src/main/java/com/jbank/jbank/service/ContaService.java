@@ -1,6 +1,8 @@
 package com.jbank.jbank.service;
 
 import com.jbank.jbank.dto.ContaDTO;
+import com.jbank.jbank.exception.ContaNaoEncontradaException;
+import com.jbank.jbank.exception.SaldoInsuficienteException;
 import com.jbank.jbank.model.Conta;
 import com.jbank.jbank.repository.ContaRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ public class ContaService {
     public ContaDTO salvar(ContaDTO dto){
 
         if(dto.getSaldo() < 0){
-            throw new RuntimeException("Erro: Saldo inicial não pode ser negativo!");
+            throw new SaldoInsuficienteException("O saldo inicial não pode ser negativo!");
         }
         Conta contaEntity = new Conta();
 
@@ -36,5 +38,11 @@ public class ContaService {
         dtoResult.setNumero(contaSalva.getNumero());
 
         return dtoResult;
+    }
+
+    public ContaDTO buscarPorId(Long id){
+        return repository.findById(id)
+                .map(ContaDTO::new)
+                .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
     }
 }
