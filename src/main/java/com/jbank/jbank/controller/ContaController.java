@@ -4,7 +4,6 @@ import com.jbank.jbank.dto.ContaDTO;
 import com.jbank.jbank.service.ContaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
