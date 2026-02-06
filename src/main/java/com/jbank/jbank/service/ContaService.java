@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 public class ContaService {
@@ -79,5 +80,33 @@ public class ContaService {
         conta.setSaldo(conta.getSaldo().subtract(valor));
 
         repository.save(conta);
+    }
+
+    @Transactional
+    public void transferir(Long idOrigem, Long idDestino, BigDecimal valor){
+        if(idOrigem.equals(idDestino)){
+            throw new SaldoInsuficienteException("Não é possível transferir para a mesma conta.");
+        }
+
+        if(valor.compareTo(BigDecimal.ZERO) <= 0){
+            throw new SaldoInsuficienteException("O valor da transferência iválido.");
+        }
+
+        var contaOrigem = repository.findById(idOrigem)
+                .orElseThrow(() -> new ContaNaoEncontradaException("Conta origem não encontrada!"));
+
+        var contaDestino = repository.findById(idDestino)
+                .orElseThrow(() -> new ContaNaoEncontradaException("Conta destino não encontrada!"));
+
+        if(contaOrigem.getSaldo().compareTo(valor) < 0){
+            throw new SaldoInsuficienteException("Saldo insuficiente para transferência.");
+        }
+
+        contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valor));
+        contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
+
+        repository.save(contaOrigem);
+        repository.save(contaDestino);
+
     }
 }
