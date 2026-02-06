@@ -2,10 +2,14 @@ package com.jbank.jbank.service;
 
 import com.jbank.jbank.dto.ContaDTO;
 import com.jbank.jbank.exception.ContaNaoEncontradaException;
+import com.jbank.jbank.exception.SaqueInvalidoException;
 import com.jbank.jbank.exception.SaldoInsuficienteException;
 import com.jbank.jbank.model.Conta;
 import com.jbank.jbank.repository.ContaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 public class ContaService {
@@ -17,7 +21,7 @@ public class ContaService {
 
     public ContaDTO salvar(ContaDTO dto){
 
-        if(dto.getSaldo() < 0){
+        if(dto.getSaldo().compareTo(BigDecimal.ZERO) < 0){
             throw new SaldoInsuficienteException("O saldo inicial não pode ser negativo!");
         }
         Conta contaEntity = new Conta();
@@ -44,5 +48,36 @@ public class ContaService {
         return repository.findById(id)
                 .map(ContaDTO::new)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
+    }
+
+    public void depositar(Long id, BigDecimal valor){
+        var conta = repository.findById(id)
+                .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
+
+        if (valor.compareTo(BigDecimal.ZERO) <= 0){
+            throw new SaldoInsuficienteException("O valor do depósito deve ser maior que zero");
+        }
+
+        conta.setSaldo(conta.getSaldo().add(valor));
+
+        repository.save(conta);
+    }
+
+    @Transactional
+    public void sacar(Long id, BigDecimal valor){
+        var conta = repository.findById(id)
+                    .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
+
+        if(valor.compareTo(BigDecimal.ZERO) <= 0){
+            throw new SaqueInvalidoException("O valor do saque deve ser maior que zero!");
+        }
+
+        if(conta.getSaldo().compareTo(valor) < 0){
+            throw new SaqueInvalidoException("Saldo insuficiente!");
+        }
+
+        conta.setSaldo(conta.getSaldo().subtract(valor));
+
+        repository.save(conta);
     }
 }

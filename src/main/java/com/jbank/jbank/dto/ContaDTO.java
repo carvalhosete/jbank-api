@@ -1,10 +1,12 @@
 package com.jbank.jbank.dto;
 
+import java.math.BigDecimal;
+
 public class ContaDTO {
     private Long id;
     private Integer agencia;
     private Integer numero;
-    private Double saldo;
+    private BigDecimal saldo;
     private String titular;
 
     public ContaDTO(){
@@ -42,11 +44,11 @@ public class ContaDTO {
         this.numero = numero;
     }
 
-    public Double getSaldo() {
+    public BigDecimal getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(Double saldo) {
+    public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
     }
 

@@ -1,6 +1,7 @@
 package com.jbank.jbank.infra.exception;
 
 import com.jbank.jbank.exception.ContaNaoEncontradaException;
+import com.jbank.jbank.exception.SaqueInvalidoException;
 import com.jbank.jbank.exception.SaldoInsuficienteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -31,6 +32,17 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         problemDetail.setTitle("Erro Interno");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         e.printStackTrace();
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(SaqueInvalidoException.class)
+    public ProblemDetail handleSaqueInvalido(SaqueInvalidoException e){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+
+        problemDetail.setTitle("Saque Inválido");
+        problemDetail.setType(URI.create("https://jbank.com/erros/saque-invalido"));
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
 
         return problemDetail;
     }

@@ -2,6 +2,8 @@ package com.jbank.jbank.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "tb_conta")
@@ -12,7 +14,7 @@ public class Conta {
     private Long id;
     private Integer agencia;
     private Integer numero;
-    private Double saldo;
+    private BigDecimal saldo;
     private String titular;
 
     public Long getId() {
@@ -39,11 +41,11 @@ public class Conta {
         this.numero = numero;
     }
 
-    public Double getSaldo() {
+    public BigDecimal getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(Double saldo) {
+    public void setSaldo(BigDecimal saldo) {
         this.saldo = saldo;
     }
 

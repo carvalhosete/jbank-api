@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.math.BigDecimal;
+
 @SpringBootApplication
 public class JbankApplication implements CommandLineRunner {
 
@@ -23,7 +25,7 @@ public class JbankApplication implements CommandLineRunner {
 
         c.setAgencia(1714);
         c.setNumero(2982);
-        c.setSaldo(5000.00);
+        c.setSaldo(BigDecimal.valueOf(5000.00));
         c.setTitular("Leonardo Carvalho");
 
         repository.save(c);

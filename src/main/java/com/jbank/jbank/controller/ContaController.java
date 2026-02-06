@@ -1,6 +1,8 @@
 package com.jbank.jbank.controller;
 
 import com.jbank.jbank.dto.ContaDTO;
+import com.jbank.jbank.dto.DepositoDTO;
+import com.jbank.jbank.dto.SaqueDTO;
 import com.jbank.jbank.service.ContaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,4 +35,17 @@ public class ContaController {
         return ResponseEntity.ok(conta);
     }
 
+    @PutMapping("/{id}/deposito")
+    public ResponseEntity<Void> depositar(@PathVariable Long id, @RequestBody DepositoDTO dados){
+        service.depositar(id, dados.valor());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/saque")
+    public ResponseEntity<Void> sacar(@PathVariable Long id, @RequestBody SaqueDTO dados){
+        service.sacar(id, dados.valor());
+
+        return ResponseEntity.noContent().build();
+    }
 }
