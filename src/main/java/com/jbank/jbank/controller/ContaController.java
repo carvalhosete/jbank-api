@@ -1,15 +1,13 @@
 package com.jbank.jbank.controller;
 
-import com.jbank.jbank.dto.ContaDTO;
-import com.jbank.jbank.dto.DepositoDTO;
-import com.jbank.jbank.dto.SaqueDTO;
-import com.jbank.jbank.dto.TransferenciaDTO;
+import com.jbank.jbank.dto.*;
 import com.jbank.jbank.service.ContaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/contas")
@@ -55,5 +53,11 @@ public class ContaController {
         service.transferir(idOrigem, dados.idDestino(), dados.valor());
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/extrato")
+    public ResponseEntity<List<ExtratoDTO>> verExtrato(@PathVariable Long id){
+        var extrato = service.listarExtrato(id);
+        return ResponseEntity.ok(extrato);
     }
 }

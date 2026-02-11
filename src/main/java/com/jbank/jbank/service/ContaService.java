@@ -1,23 +1,29 @@
 package com.jbank.jbank.service;
 
 import com.jbank.jbank.dto.ContaDTO;
+import com.jbank.jbank.dto.ExtratoDTO;
 import com.jbank.jbank.exception.ContaNaoEncontradaException;
 import com.jbank.jbank.exception.SaqueInvalidoException;
 import com.jbank.jbank.exception.SaldoInsuficienteException;
 import com.jbank.jbank.model.Conta;
+import com.jbank.jbank.model.Transacao;
+import com.jbank.jbank.model.enums.TipoTransacao;
 import com.jbank.jbank.repository.ContaRepository;
+import com.jbank.jbank.repository.TransacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.util.List;
 
 @Service
 public class ContaService {
-    private final ContaRepository repository;
+    private final ContaRepository contaRepository;
+    private final TransacaoRepository transacaoRepository;
 
-    public ContaService(ContaRepository repository) {
-        this.repository = repository;
+    public ContaService(ContaRepository contaRepository, TransacaoRepository transacaoRepository) {
+        this.contaRepository = contaRepository;
+        this.transacaoRepository = transacaoRepository;
     }
 
     public ContaDTO salvar(ContaDTO dto){
@@ -32,7 +38,7 @@ public class ContaService {
         contaEntity.setAgencia(dto.getAgencia());
         contaEntity.setNumero(dto.getNumero());
 
-        Conta contaSalva = repository.save(contaEntity);
+        Conta contaSalva = contaRepository.save(contaEntity);
 
         ContaDTO dtoResult = new ContaDTO();
 
@@ -46,13 +52,14 @@ public class ContaService {
     }
 
     public ContaDTO buscarPorId(Long id){
-        return repository.findById(id)
+        return contaRepository.findById(id)
                 .map(ContaDTO::new)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
     }
 
+    @Transactional
     public void depositar(Long id, BigDecimal valor){
-        var conta = repository.findById(id)
+        var conta = contaRepository.findById(id)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
 
         if (valor.compareTo(BigDecimal.ZERO) <= 0){
@@ -60,13 +67,18 @@ public class ContaService {
         }
 
         conta.setSaldo(conta.getSaldo().add(valor));
+        contaRepository.save(conta);
 
-        repository.save(conta);
+        Transacao transacao = new Transacao();
+        transacao.setConta(conta);
+        transacao.setValor(valor);
+        transacao.setTipo(TipoTransacao.DEPOSITO);
+        transacaoRepository.save(transacao);
     }
 
     @Transactional
     public void sacar(Long id, BigDecimal valor){
-        var conta = repository.findById(id)
+        var conta = contaRepository.findById(id)
                     .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
 
         if(valor.compareTo(BigDecimal.ZERO) <= 0){
@@ -78,8 +90,13 @@ public class ContaService {
         }
 
         conta.setSaldo(conta.getSaldo().subtract(valor));
+        contaRepository.save(conta);
 
-        repository.save(conta);
+        Transacao transacao = new Transacao();
+        transacao.setConta(conta);
+        transacao.setValor(valor);
+        transacao.setTipo(TipoTransacao.SAQUE);
+        transacaoRepository.save(transacao);
     }
 
     @Transactional
@@ -92,10 +109,10 @@ public class ContaService {
             throw new SaldoInsuficienteException("O valor da transferência iválido.");
         }
 
-        var contaOrigem = repository.findById(idOrigem)
+        var contaOrigem = contaRepository.findById(idOrigem)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta origem não encontrada!"));
 
-        var contaDestino = repository.findById(idDestino)
+        var contaDestino = contaRepository.findById(idDestino)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta destino não encontrada!"));
 
         if(contaOrigem.getSaldo().compareTo(valor) < 0){
@@ -104,9 +121,27 @@ public class ContaService {
 
         contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valor));
         contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
+        contaRepository.save(contaOrigem);
+        contaRepository.save(contaDestino);
 
-        repository.save(contaOrigem);
-        repository.save(contaDestino);
+        Transacao tOrigem = new Transacao();
+        tOrigem.setConta(contaOrigem);
+        tOrigem.setValor(valor);
+        tOrigem.setTipo(TipoTransacao.TRANSFERENCIA_SAIDA);
+        transacaoRepository.save(tOrigem);
 
+        Transacao tDestino = new Transacao();
+        tDestino.setConta(contaDestino);
+        tDestino.setValor(valor);
+        tDestino.setTipo(TipoTransacao.TRANSFERENCIA_ENTRADA);
+        transacaoRepository.save(tDestino);
+
+    }
+
+    public List<ExtratoDTO> listarExtrato(Long idConta){
+        return transacaoRepository.findByContaId(idConta)
+                .stream()
+                .map(t -> new ExtratoDTO(t.getTipo(),t.getValor(),t.getDataHora()))
+                .toList();
     }
 }

@@ -26,8 +26,17 @@ public class JbankApplication implements CommandLineRunner {
         c.setAgencia(1714);
         c.setNumero(2982);
         c.setSaldo(BigDecimal.valueOf(5000.00));
-        c.setTitular("Leonardo Carvalho");
+        c.setTitular("Leonardo");
 
         repository.save(c);
+
+        Conta c2 = new Conta();
+
+        c2.setAgencia(9984);
+        c2.setNumero(9654);
+        c2.setSaldo(BigDecimal.valueOf(10000.00));
+        c2.setTitular("Carvalho");
+
+        repository.save(c2);
     }
 }
