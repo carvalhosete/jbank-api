@@ -1,15 +1,15 @@
-package com.jbank.jbank.service;
+package com.jbank.jbank.core.usecase;
 
-import com.jbank.jbank.dto.ContaDTO;
-import com.jbank.jbank.dto.ExtratoDTO;
+import com.jbank.jbank.adapters.in.web.dto.ContaDTO;
+import com.jbank.jbank.adapters.in.web.dto.ExtratoDTO;
+import com.jbank.jbank.core.ports.out.ContaRepositoryPort;
 import com.jbank.jbank.exception.ContaNaoEncontradaException;
 import com.jbank.jbank.exception.SaqueInvalidoException;
 import com.jbank.jbank.exception.SaldoInsuficienteException;
-import com.jbank.jbank.model.Conta;
+import com.jbank.jbank.core.domain.Conta;
 import com.jbank.jbank.model.Transacao;
 import com.jbank.jbank.model.enums.TipoTransacao;
-import com.jbank.jbank.repository.ContaRepository;
-import com.jbank.jbank.repository.TransacaoRepository;
+import com.jbank.jbank.adapters.out.persistence.repository.TransacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,11 @@ import java.util.List;
 
 @Service
 public class ContaService {
-    private final ContaRepository contaRepository;
+    private final ContaRepositoryPort contaRepositoryPort;
     private final TransacaoRepository transacaoRepository;
 
-    public ContaService(ContaRepository contaRepository, TransacaoRepository transacaoRepository) {
-        this.contaRepository = contaRepository;
+    public ContaService(ContaRepositoryPort contaRepositoryPort, TransacaoRepository transacaoRepository) {
+        this.contaRepositoryPort = contaRepositoryPort;
         this.transacaoRepository = transacaoRepository;
     }
 
@@ -38,7 +38,7 @@ public class ContaService {
         contaEntity.setAgencia(dto.getAgencia());
         contaEntity.setNumero(dto.getNumero());
 
-        Conta contaSalva = contaRepository.save(contaEntity);
+        Conta contaSalva = contaRepositoryPort.salvar(contaEntity);
 
         ContaDTO dtoResult = new ContaDTO();
 
@@ -52,14 +52,14 @@ public class ContaService {
     }
 
     public ContaDTO buscarPorId(Long id){
-        return contaRepository.findById(id)
+        return contaRepositoryPort.buscarPorId(id)
                 .map(ContaDTO::new)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
     }
 
     @Transactional
     public void depositar(Long id, BigDecimal valor){
-        var conta = contaRepository.findById(id)
+        var conta = contaRepositoryPort.buscarPorId(id)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
 
         if (valor.compareTo(BigDecimal.ZERO) <= 0){
@@ -67,7 +67,7 @@ public class ContaService {
         }
 
         conta.setSaldo(conta.getSaldo().add(valor));
-        contaRepository.save(conta);
+        contaRepositoryPort.salvar(conta);
 
         Transacao transacao = new Transacao();
         transacao.setConta(conta);
@@ -78,7 +78,7 @@ public class ContaService {
 
     @Transactional
     public void sacar(Long id, BigDecimal valor){
-        var conta = contaRepository.findById(id)
+        var conta = contaRepositoryPort.buscarPorId(id)
                     .orElseThrow(() -> new ContaNaoEncontradaException("Conta não encontrada!"));
 
         if(valor.compareTo(BigDecimal.ZERO) <= 0){
@@ -90,7 +90,7 @@ public class ContaService {
         }
 
         conta.setSaldo(conta.getSaldo().subtract(valor));
-        contaRepository.save(conta);
+        contaRepositoryPort.salvar(conta);
 
         Transacao transacao = new Transacao();
         transacao.setConta(conta);
@@ -109,10 +109,10 @@ public class ContaService {
             throw new SaldoInsuficienteException("O valor da transferência iválido.");
         }
 
-        var contaOrigem = contaRepository.findById(idOrigem)
+        var contaOrigem = contaRepositoryPort.buscarPorId(idOrigem)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta origem não encontrada!"));
 
-        var contaDestino = contaRepository.findById(idDestino)
+        var contaDestino = contaRepositoryPort.buscarPorId(idDestino)
                 .orElseThrow(() -> new ContaNaoEncontradaException("Conta destino não encontrada!"));
 
         if(contaOrigem.getSaldo().compareTo(valor) < 0){
@@ -121,8 +121,8 @@ public class ContaService {
 
         contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(valor));
         contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
-        contaRepository.save(contaOrigem);
-        contaRepository.save(contaDestino);
+        contaRepositoryPort.salvar(contaOrigem);
+        contaRepositoryPort.salvar(contaDestino);
 
         Transacao tOrigem = new Transacao();
         tOrigem.setConta(contaOrigem);

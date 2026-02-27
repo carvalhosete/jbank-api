@@ -1,7 +1,7 @@
 package com.jbank.jbank;
 
-import com.jbank.jbank.model.Conta;
-import com.jbank.jbank.repository.ContaRepository;
+import com.jbank.jbank.adapters.out.persistence.repository.ContaEntity;
+import com.jbank.jbank.adapters.out.persistence.repository.ContaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +21,7 @@ public class JbankApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Conta c = new Conta();
+        ContaEntity c = new ContaEntity();
 
         c.setAgencia(1714);
         c.setNumero(2982);
@@ -30,7 +30,7 @@ public class JbankApplication implements CommandLineRunner {
 
         repository.save(c);
 
-        Conta c2 = new Conta();
+        ContaEntity c2 = new ContaEntity();
 
         c2.setAgencia(9984);
         c2.setNumero(9654);

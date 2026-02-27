@@ -1,16 +1,8 @@
-package com.jbank.jbank.model;
-
-import jakarta.persistence.*;
+package com.jbank.jbank.core.domain;
 
 import java.math.BigDecimal;
 
-
-@Entity
-@Table(name = "tb_conta")
-
 public class Conta {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer agencia;
     private Integer numero;

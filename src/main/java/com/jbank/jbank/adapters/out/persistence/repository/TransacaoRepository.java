@@ -1,4 +1,4 @@
-package com.jbank.jbank.repository;
+package com.jbank.jbank.adapters.out.persistence.repository;
 
 import java.util.List;
 import com.jbank.jbank.model.Transacao;

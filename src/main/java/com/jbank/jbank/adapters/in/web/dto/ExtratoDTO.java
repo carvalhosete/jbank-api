@@ -1,4 +1,4 @@
-package com.jbank.jbank.dto;
+package com.jbank.jbank.adapters.in.web.dto;
 
 import com.jbank.jbank.model.enums.TipoTransacao;
 import java.math.BigDecimal;

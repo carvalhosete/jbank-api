@@ -1,5 +1,6 @@
 package com.jbank.jbank.model;
 
+import com.jbank.jbank.adapters.out.persistence.repository.ContaEntity;
 import com.jbank.jbank.model.enums.TipoTransacao;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,7 +25,7 @@ public class Transacao {
 
     @ManyToOne
     @JoinColumn(name="conta_id")
-    private Conta conta;
+    private ContaEntity conta;
 
 
     public Long getId() {
@@ -59,11 +60,11 @@ public class Transacao {
         this.dataHora = dataHora;
     }
 
-    public Conta getConta() {
+    public ContaEntity getConta() {
         return conta;
     }
 
-    public void setConta(Conta conta) {
+    public void setConta(ContaEntity conta) {
         this.conta = conta;
     }
 }

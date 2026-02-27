@@ -1,24 +1,21 @@
-package com.jbank.jbank.dto;
+package com.jbank.jbank.adapters.out.persistence.repository;
+
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
-public class ContaDTO {
+
+@Entity
+@Table(name = "tb_conta")
+
+public class ContaEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer agencia;
     private Integer numero;
     private BigDecimal saldo;
     private String titular;
-
-    public ContaDTO(){
-    }
-
-    public ContaDTO(com.jbank.jbank.model.Conta conta){
-        this.id = conta.getId();
-        this.agencia = conta.getAgencia();
-        this.numero = conta.getNumero();
-        this.saldo = conta.getSaldo();
-        this.titular = conta.getTitular();
-    }
 
     public Long getId() {
         return id;
