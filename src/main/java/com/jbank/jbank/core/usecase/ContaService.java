@@ -3,13 +3,13 @@ package com.jbank.jbank.core.usecase;
 import com.jbank.jbank.adapters.in.web.dto.ContaDTO;
 import com.jbank.jbank.adapters.in.web.dto.ExtratoDTO;
 import com.jbank.jbank.core.ports.out.ContaRepositoryPort;
+import com.jbank.jbank.core.ports.out.TransacaoRepositoryPort;
 import com.jbank.jbank.exception.ContaNaoEncontradaException;
 import com.jbank.jbank.exception.SaqueInvalidoException;
 import com.jbank.jbank.exception.SaldoInsuficienteException;
 import com.jbank.jbank.core.domain.Conta;
-import com.jbank.jbank.model.Transacao;
+import com.jbank.jbank.core.domain.Transacao;
 import com.jbank.jbank.model.enums.TipoTransacao;
-import com.jbank.jbank.adapters.out.persistence.repository.TransacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +19,11 @@ import java.util.List;
 @Service
 public class ContaService {
     private final ContaRepositoryPort contaRepositoryPort;
-    private final TransacaoRepository transacaoRepository;
+    private final TransacaoRepositoryPort transacaoRepositoryPort;
 
-    public ContaService(ContaRepositoryPort contaRepositoryPort, TransacaoRepository transacaoRepository) {
+    public ContaService(ContaRepositoryPort contaRepositoryPort, TransacaoRepositoryPort transacaoRepositoryPort) {
         this.contaRepositoryPort = contaRepositoryPort;
-        this.transacaoRepository = transacaoRepository;
+        this.transacaoRepositoryPort = transacaoRepositoryPort;
     }
 
     public ContaDTO salvar(ContaDTO dto){
@@ -73,7 +73,7 @@ public class ContaService {
         transacao.setConta(conta);
         transacao.setValor(valor);
         transacao.setTipo(TipoTransacao.DEPOSITO);
-        transacaoRepository.save(transacao);
+        transacaoRepositoryPort.salvar(transacao);
     }
 
     @Transactional
@@ -96,7 +96,7 @@ public class ContaService {
         transacao.setConta(conta);
         transacao.setValor(valor);
         transacao.setTipo(TipoTransacao.SAQUE);
-        transacaoRepository.save(transacao);
+        transacaoRepositoryPort.salvar(transacao);
     }
 
     @Transactional
@@ -128,18 +128,18 @@ public class ContaService {
         tOrigem.setConta(contaOrigem);
         tOrigem.setValor(valor);
         tOrigem.setTipo(TipoTransacao.TRANSFERENCIA_SAIDA);
-        transacaoRepository.save(tOrigem);
+        transacaoRepositoryPort.salvar(tOrigem);
 
         Transacao tDestino = new Transacao();
         tDestino.setConta(contaDestino);
         tDestino.setValor(valor);
         tDestino.setTipo(TipoTransacao.TRANSFERENCIA_ENTRADA);
-        transacaoRepository.save(tDestino);
+        transacaoRepositoryPort.salvar(tDestino);
 
     }
 
     public List<ExtratoDTO> listarExtrato(Long idConta){
-        return transacaoRepository.findByContaId(idConta)
+        return transacaoRepositoryPort.findByContaId(idConta)
                 .stream()
                 .map(t -> new ExtratoDTO(t.getTipo(),t.getValor(),t.getDataHora()))
                 .toList();

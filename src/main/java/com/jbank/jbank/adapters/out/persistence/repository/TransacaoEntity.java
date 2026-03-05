@@ -1,14 +1,13 @@
-package com.jbank.jbank.model;
+package com.jbank.jbank.adapters.out.persistence.repository;
 
-import com.jbank.jbank.adapters.out.persistence.repository.ContaEntity;
 import com.jbank.jbank.model.enums.TipoTransacao;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-public class Transacao {
+@jakarta.persistence.Entity
+public class TransacaoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
