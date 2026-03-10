@@ -1,4 +1,4 @@
-package com.jbank.jbank.adapters.in.web.dto;
+package com.jbank.jbank.adapters.in.dto;
 
 import java.math.BigDecimal;
 

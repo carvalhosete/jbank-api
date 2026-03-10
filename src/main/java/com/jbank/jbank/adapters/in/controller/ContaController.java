@@ -1,6 +1,6 @@
-package com.jbank.jbank.adapters.in.web.controller;
+package com.jbank.jbank.adapters.in.controller;
 
-import com.jbank.jbank.adapters.in.web.dto.*;
+import com.jbank.jbank.adapters.in.dto.*;
 import com.jbank.jbank.core.usecase.ContaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
