@@ -1,25 +1,14 @@
 package com.jbank.jbank;
 
-import com.jbank.jbank.adapters.out.persistence.repository.ContaEntity;
-import com.jbank.jbank.adapters.out.persistence.repository.ContaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.math.BigDecimal;
 
 @SpringBootApplication
-public class JbankApplication implements CommandLineRunner {
-
+@EnableAsync
+public class JbankApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(JbankApplication.class, args);
+        SpringApplication.run(JbankApplication.class, args);
 	}
-
-    @Autowired
-    private ContaRepository repository;
-
-    @Override
-    public void run(String... args) throws Exception {
-    }
 }

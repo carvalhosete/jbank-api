@@ -3,6 +3,7 @@ package com.jbank.jbank.core.usecase;
 import com.jbank.jbank.adapters.in.web.dto.ContaDTO;
 import com.jbank.jbank.adapters.in.web.dto.ExtratoDTO;
 import com.jbank.jbank.core.ports.out.ContaRepositoryPort;
+import com.jbank.jbank.core.ports.out.NotificacaoBacenPort;
 import com.jbank.jbank.core.ports.out.TransacaoRepositoryPort;
 import com.jbank.jbank.exception.ContaNaoEncontradaException;
 import com.jbank.jbank.exception.SaqueInvalidoException;
@@ -20,10 +21,12 @@ import java.util.List;
 public class ContaService {
     private final ContaRepositoryPort contaRepositoryPort;
     private final TransacaoRepositoryPort transacaoRepositoryPort;
+    private final NotificacaoBacenPort notificacaoBacenPort;
 
-    public ContaService(ContaRepositoryPort contaRepositoryPort, TransacaoRepositoryPort transacaoRepositoryPort) {
+    public ContaService(ContaRepositoryPort contaRepositoryPort, TransacaoRepositoryPort transacaoRepositoryPort, NotificacaoBacenPort notificacaoBacenPort) {
         this.contaRepositoryPort = contaRepositoryPort;
         this.transacaoRepositoryPort = transacaoRepositoryPort;
+        this.notificacaoBacenPort = notificacaoBacenPort;
     }
 
     public ContaDTO salvar(ContaDTO dto){
@@ -135,6 +138,8 @@ public class ContaService {
         tDestino.setValor(valor);
         tDestino.setTipo(TipoTransacao.TRANSFERENCIA_ENTRADA);
         transacaoRepositoryPort.salvar(tDestino);
+
+        notificacaoBacenPort.notificarTransferencia(tOrigem);
 
     }
 
