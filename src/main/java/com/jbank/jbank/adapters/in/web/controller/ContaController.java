@@ -56,8 +56,11 @@ public class ContaController {
     }
 
     @GetMapping("/{id}/extrato")
-    public ResponseEntity<List<ExtratoDTO>> verExtrato(@PathVariable Long id){
-        var extrato = service.listarExtrato(id);
+    public ResponseEntity<List<ExtratoDTO>> verExtrato(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho) {
+        var extrato = service.listarExtrato(id, pagina, tamanho);
         return ResponseEntity.ok(extrato);
     }
 }

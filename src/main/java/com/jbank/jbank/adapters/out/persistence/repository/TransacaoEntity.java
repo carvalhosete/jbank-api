@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @jakarta.persistence.Entity
+@Table(name = "transacao", indexes = {
+        @Index(name = "idx_transacao_conta_id", columnList = "conta_id")
+})
 public class TransacaoEntity {
 
     @Id

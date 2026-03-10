@@ -36,10 +36,12 @@ public class TransacaoRepositoryAdapter implements TransacaoRepositoryPort {
     }
 
     @Override
-    public List<Transacao> findByContaId(Long idConta){
-        List<TransacaoEntity> entities = transacaoRepositoryJPA.findByContaId(idConta);
+    public List<Transacao> findByContaId(Long idConta, int numeroPagina, int tamanhoPagina) {
 
-        return entities.stream()
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(numeroPagina, tamanhoPagina);
+        org.springframework.data.domain.Page<TransacaoEntity> paginaDeEntidades = transacaoRepositoryJPA.findByContaId(idConta, pageable);
+
+        return paginaDeEntidades.stream()
                 .map(this::toTransacaoDomain)
                 .toList();
     }

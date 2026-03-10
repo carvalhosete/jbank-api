@@ -6,5 +6,5 @@ import java.util.List;
 public interface TransacaoRepositoryPort {
     Transacao salvar(Transacao transacao);
 
-    List<Transacao> findByContaId(Long idConta);
+    List<Transacao> findByContaId(Long idConta, int numeroPagina, int tamanhoPagina);
 }

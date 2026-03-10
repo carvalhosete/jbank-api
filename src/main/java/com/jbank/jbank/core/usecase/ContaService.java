@@ -138,8 +138,8 @@ public class ContaService {
 
     }
 
-    public List<ExtratoDTO> listarExtrato(Long idConta){
-        return transacaoRepositoryPort.findByContaId(idConta)
+    public List<ExtratoDTO> listarExtrato(Long idConta, int numeroPagina, int tamanhoPagina){
+        return transacaoRepositoryPort.findByContaId(idConta, numeroPagina, tamanhoPagina)
                 .stream()
                 .map(t -> new ExtratoDTO(t.getTipo(),t.getValor(),t.getDataHora()))
                 .toList();
