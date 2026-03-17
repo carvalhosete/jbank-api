@@ -5,6 +5,7 @@ import com.jbank.jbank.core.usecase.ContaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import jakarta.validation.Valid;
 
 import java.net.URI;
 import java.util.List;
@@ -35,21 +36,21 @@ public class ContaController {
     }
 
     @PutMapping("/{id}/deposito")
-    public ResponseEntity<Void> depositar(@PathVariable Long id, @RequestBody DepositoDTO dados){
+    public ResponseEntity<Void> depositar(@PathVariable Long id, @Valid @RequestBody DepositoDTO dados){
         service.depositar(id, dados.valor());
 
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/saque")
-    public ResponseEntity<Void> sacar(@PathVariable Long id, @RequestBody SaqueDTO dados){
+    public ResponseEntity<Void> sacar(@PathVariable Long id, @Valid @RequestBody SaqueDTO dados){
         service.sacar(id, dados.valor());
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{idOrigem}/transferencia")
-    public ResponseEntity<Void> transferir(@PathVariable Long idOrigem, @RequestBody TransferenciaDTO dados){
+    public ResponseEntity<Void> transferir(@PathVariable Long idOrigem, @Valid @RequestBody TransferenciaDTO dados){
         service.transferir(idOrigem, dados.idDestino(), dados.valor());
 
         return ResponseEntity.noContent().build();
