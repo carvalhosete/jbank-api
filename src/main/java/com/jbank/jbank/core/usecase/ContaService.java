@@ -5,9 +5,9 @@ import com.jbank.jbank.adapters.in.dto.ExtratoDTO;
 import com.jbank.jbank.core.ports.out.ContaRepositoryPort;
 import com.jbank.jbank.core.ports.out.NotificacaoBacenPort;
 import com.jbank.jbank.core.ports.out.TransacaoRepositoryPort;
-import com.jbank.jbank.exception.ContaNaoEncontradaException;
-import com.jbank.jbank.exception.SaqueInvalidoException;
-import com.jbank.jbank.exception.SaldoInsuficienteException;
+import com.jbank.jbank.infra.exception.ContaNaoEncontradaException;
+import com.jbank.jbank.infra.exception.SaqueInvalidoException;
+import com.jbank.jbank.infra.exception.SaldoInsuficienteException;
 import com.jbank.jbank.core.domain.Conta;
 import com.jbank.jbank.core.domain.Transacao;
 import com.jbank.jbank.model.enums.TipoTransacao;
@@ -142,6 +142,7 @@ public class ContaService {
         notificacaoBacenPort.notificarTransferencia(tOrigemSalva);
 
     }
+
 
     public List<ExtratoDTO> listarExtrato(Long idConta, int numeroPagina, int tamanhoPagina){
         return transacaoRepositoryPort.findByContaId(idConta, numeroPagina, tamanhoPagina)

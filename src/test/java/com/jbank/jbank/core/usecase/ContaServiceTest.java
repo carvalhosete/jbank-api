@@ -5,7 +5,7 @@ import com.jbank.jbank.core.domain.Transacao;
 import com.jbank.jbank.core.ports.out.ContaRepositoryPort;
 import com.jbank.jbank.core.ports.out.NotificacaoBacenPort;
 import com.jbank.jbank.core.ports.out.TransacaoRepositoryPort;
-import com.jbank.jbank.exception.SaldoInsuficienteException;
+import com.jbank.jbank.infra.exception.SaldoInsuficienteException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,17 +51,16 @@ class ContaServiceTest {
         contaDestino.setId(idDestino);
         contaDestino.setSaldo(new BigDecimal("500.00"));
 
-        Transacao transacaoFake = new Transacao(); // Criamos para o mock da notificacao
+        Transacao transacaoFake = new Transacao();
 
         when(contaRepositoryPort.buscarPorId(idOrigem)).thenReturn(Optional.of(contaOrigem));
         when(contaRepositoryPort.buscarPorId(idDestino)).thenReturn(Optional.of(contaDestino));
-        // O seu service precisa do retorno do salvar da transacao para notificar o Bacen
+
         when(transacaoRepositoryPort.salvar(any(Transacao.class))).thenReturn(transacaoFake);
 
-        // WHEN
+
         assertDoesNotThrow(() -> contaService.transferir(idOrigem, idDestino, valor));
 
-        // THEN
         assertEquals(new BigDecimal("900.00"), contaOrigem.getSaldo());
         assertEquals(new BigDecimal("600.00"), contaDestino.getSaldo());
 
@@ -73,7 +72,7 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve lancar excecao quando saldo for insuficiente")
     void deveLancarErroSaldoInsuficiente() {
-        // GIVEN
+
         Long idOrigem = 1L;
         Long idDestino = 2L;
 
@@ -87,7 +86,7 @@ class ContaServiceTest {
         when(contaRepositoryPort.buscarPorId(idOrigem)).thenReturn(Optional.of(contaOrigem));
         when(contaRepositoryPort.buscarPorId(idDestino)).thenReturn(Optional.of(contaDestino));
 
-        // WHEN & THEN
+
         assertThrows(SaldoInsuficienteException.class, () ->
                 contaService.transferir(idOrigem, idDestino, new BigDecimal("100.00"))
         );

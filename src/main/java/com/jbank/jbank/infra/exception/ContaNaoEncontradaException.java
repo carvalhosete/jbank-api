@@ -1,4 +1,4 @@
-package com.jbank.jbank.exception;
+package com.jbank.jbank.infra.exception;
 
 public class ContaNaoEncontradaException  extends RuntimeException {
     public ContaNaoEncontradaException(String mensagem){

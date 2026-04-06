@@ -1,8 +1,5 @@
 package com.jbank.jbank.infra.exception;
 
-import com.jbank.jbank.exception.ContaNaoEncontradaException;
-import com.jbank.jbank.exception.SaqueInvalidoException;
-import com.jbank.jbank.exception.SaldoInsuficienteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
